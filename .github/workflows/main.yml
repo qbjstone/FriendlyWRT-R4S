@@ -59,8 +59,10 @@ jobs:
       - name: Install Extra Packages
         run: |
           cd code/friendlywrt/package
-          cp scripts/lean.sh code/friendlywrt/package
-          chmod +x scripts/*.sh
+          mkdir lean.sh
+          cp -f scripts/lean.sh code/friendlywrt/package/lean.sh
+          #cd code/friendlywrt/package
+          chomd -R 777 *.sh
           ./lean.sh
         
       - name: Install Clash Binaries
