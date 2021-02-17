@@ -3,8 +3,8 @@ name: NanoPi-R4S RK3399 OpenWrt 19.07 Build
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: 0 17 * * *
+  # schedule:
+  #   - cron: 0 17 * * *
   # watch:
   #   types: started
 
@@ -32,7 +32,6 @@ jobs:
           sudo apt-get -y purge dotnet* ghc* google* llvm* mysql* php* zulu* firefox hhvm
           sudo apt-get -y autoremove --purge          
           wget -O - https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh | bash
-
       #- name: Setup Debug Session
       #  uses: P3TERX/debugger-action@master
   
@@ -40,7 +39,6 @@ jobs:
         run: |
           git clone https://github.com/friendlyarm/repo
           sudo cp repo/repo /usr/bin/
-
       - name: Download Source
         run: |
           rm -rf code
@@ -48,7 +46,6 @@ jobs:
           cd code
           repo init -u https://github.com/friendlyarm/friendlywrt_manifests -b master-v19.07.5 -m rk3399.xml --repo-url=https://github.com/friendlyarm/repo --no-clone-bundle
           repo sync -c --no-clone-bundle -j8
-
       - name: Merge LEDE
         run: |
           cd code
@@ -59,19 +56,14 @@ jobs:
           sed -i 's/^src-git luci.*/src-git luci https:\/\/github.com\/coolsnowwolf\/luci/' feeds.conf.default
           sed -i 's/^src-git packages.*/src-git packages https:\/\/github.com\/coolsnowwolf\/packages;openwrt-19.07/' feeds.conf.default
           echo 'src-git node https://github.com/nxhack/openwrt-node-packages.git' >> feeds.conf.default
-
       - name: Install Extra Packages
         run: |
           cd code/friendlywrt/package
-
           git clone https://github.com/rufengsuixing/luci-app-adguardhome
-
           git clone https://github.com/jerrykuku/lua-maxminddb.git
           git clone https://github.com/jerrykuku/luci-app-vssr.git
-
           rm -rf lean/luci-theme-argon
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
-
           svn co https://github.com/vernesong/OpenClash/trunk/luci-app-openclash
           
           svn co https://github.com/xiaorouji/openwrt-passwall/trunk/luci-app-passwall
@@ -103,34 +95,28 @@ jobs:
           # for updates, go to: https://github.com/vernesong/OpenClash/releases/tag/TUN
           wget -qO- https://github.com/vernesong/OpenClash/releases/download/TUN/clash-linux-armv8.tar.gz | tar xOvz > etc/openclash/core/clash_game
           chmod +x etc/openclash/core/clash*
-
       - name: Update Target.mk
         run: |
           cd code/friendlywrt/include
           sed -i 's/dnsmasq /dnsmasq-full default-settings luci /' target.mk
-
       - name: Update Feeds		
         run: |		
           cd code/friendlywrt		
           ./scripts/feeds update -a		
           ./scripts/feeds install -a
-
       - name: Install Mods
         run: |
           cd code
-
           rm -rf friendlywrt/feeds/packages/libs/libcap
           svn co https://github.com/openwrt/packages/trunk/libs/libcap friendlywrt/feeds/packages/libs/libcap
           
           rm -rf friendlywrt/package/feeds/packages/netdata
           svn co https://github.com/openwrt/packages/trunk/admin/netdata friendlywrt/package/feeds/packages/netdata
-
           rm -rf friendlywrt/feeds/packages/libs/libnatpmp
           svn co https://github.com/coolsnowwolf/packages/trunk/libs/libnatpmp friendlywrt/feeds/packages/libs/libnatpmp
           
           rm -rf friendlywrt/feeds/packages/lang/luasec
           svn co https://github.com/coolsnowwolf/packages/trunk/lang/luasec friendlywrt/feeds/packages/lang/luasec
-
           sed -i '/STAMP_BUILT/d' friendlywrt/feeds/packages/utils/runc/Makefile
           sed -i '/STAMP_BUILT/d' friendlywrt/feeds/packages/utils/containerd/Makefile
           
@@ -138,27 +124,23 @@ jobs:
           
           wget -O friendlywrt/package/kernel/kmod-sched-cake/Makefile https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/kernel/kmod-sched-cake-oot/Makefile
           wget -O friendlywrt/feeds/packages/libs/libxml2/Makefile https://raw.githubusercontent.com/coolsnowwolf/packages/master/libs/libxml2/Makefile
-
           sed -i "/redirect_https/d" friendlywrt/package/network/services/uhttpd/files/uhttpd.config
-          sed -i '/Load Average/i\\t\t<tr><td width="33%"><%:欢迎订阅 Youbube 频道%></td><td><%=< a href="https://www.youtube.com/c/BIGdongdong">BIGDONGDONG</ a></td></tr>' friendlywrt/feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-          sed -i '/Load Average/i\\t\t<tr><td width="33%"><%:CPU温度🌡%></td><td><%=luci.sys.exec("cut -c1-2 /sys/class/thermal/thermal_zone0/temp")%><span>&#8451;</span></td></tr>' friendlywrt/feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+          sed -i '/Load Average/i\\t\t<tr><td width="33%"><%:CPU Temperature%></td><td><%=luci.sys.exec("cut -c1-2 /sys/class/thermal/thermal_zone0/temp")%><span>&#8451;</span></td></tr>' friendlywrt/feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+          sed -i '/Load Average/i\\t\t<tr><td width="33%"><%:CPU温度🍦%></td><td><%=luci.sys.exec("cut -c1-2 /sys/class/thermal/thermal_zone0/temp")%><span>&#8451;</span></td></tr>' friendlywrt/feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
           sed -i 's/pcdata(boardinfo.system or "?")/"ARMv8"/' friendlywrt/feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
           sed -i 's/services/vpn/g' friendlywrt/package/feeds/luci/luci-app-openvpn/luasrc/controller/openvpn.lua
           sed -i 's/resolv.conf.d\/resolv.conf.auto/resolv.conf.auto/g' friendlywrt/package/lean/luci-app-flowoffload/root/etc/init.d/flowoffload
           
           sed -i '/done/imkfs.ext4 \/dev\/mmcblk0p2 && mkdir \/mnt\/mmcblk0p2 && mount \/dev\/mmcblk0p2 \/mnt\/mmcblk0p2 && mount \/dev\/mmcblk0p2 \/opt\n' ./friendlywrt/package/base-files/files/root/setup.sh
           # sed -i 's/\/root/\/mnt\/mmcblk0p2/g' ./friendlywrt/package/luci-app-r2sflasher/root/usr/bin/rom_flash
-
       - name: Patch Kernel
         run: |
           cd code/kernel/
           #git apply ../../patches/001-add-full_cone_nat.patch
-
       - name: Custom Configure Files
         run: |
           rm -f code/friendlywrt/.config*
           cp config/r4s-rk3399-config code/configs/config_rk3399
-
       - name: Set Default Values
         run: |
           cd code/friendlywrt
@@ -167,13 +149,11 @@ jobs:
       - name: Install UPX
         run: |
           ln -s /usr/bin/upx-ucl code/friendlywrt/staging_dir/host/bin/upx
-
       - name: Build OpenWrt
         run: |
           cd code
           sed -i 's/set -eu/set -u/' scripts/mk-friendlywrt.sh
           ./build.sh nanopi_r4s.mk
-
       - name: Fix Rootfs Owner and Group
         run: |
           lodev=$(sudo losetup -P -f --show code/out/*.img)
@@ -183,16 +163,13 @@ jobs:
           sudo chown -R root:root /mnt/friendlywrt-tmp
           sudo umount /mnt/friendlywrt-tmp
           sudo losetup -d $lodev
-
       - name: Assemble Artifact
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
-
           #find code/out/ -name "FriendlyWrt_*img" | xargs -I{} sh -c 'f=$(basename $1); zip -r -j "./artifact/${f}.zip" $1' sh {} \;
           cp code/out/*.img.zip ./artifact/
           cp code/friendlywrt/.config ./artifact/
-
       - name: Upload Artifact
         uses: actions/upload-artifact@main
         with:
