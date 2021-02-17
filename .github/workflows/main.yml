@@ -77,7 +77,7 @@ jobs:
           svn co https://github.com/xiaorouji/openwrt-passwall/trunk/chinadns-ng
           svn co https://github.com/xiaorouji/openwrt-passwall/trunk/xray-core
           
-          # svn co https://github.com/songchenwen/nanopi-r2s/trunk/luci-app-r2sflasher
+          #svn co https://github.com/songchenwen/nanopi-r2s/trunk/luci-app-r2sflasher
           
           svn co https://github.com/pymumu/smartdns/trunk/package/openwrt smartdns
           svn co https://github.com/pymumu/luci-app-smartdns/branches/lede luci-app-smartdns
