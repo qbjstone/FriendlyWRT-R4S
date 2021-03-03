@@ -2,7 +2,7 @@
 
 # 基于FriendlyWRT源码
 
-- 账号 root  默认密码 passwall
+- 账号 root  默认密码 password
 
 - 默认地址 192.168.2.1
 
