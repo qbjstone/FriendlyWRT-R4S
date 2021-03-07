@@ -210,9 +210,9 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1.7.3
         with:
-          name: FriendlyWrt_NanoPi-R4S RK3399 v19.07
+          name: FriendlyWrt_NanoPi-R4S
           allowUpdates: true
-          tag: R2S20210306
+          tag: R2S20210308
           commit: main
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
