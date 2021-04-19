@@ -3,7 +3,7 @@ name: NanoPi-R4S RK3399 OpenWrt 19.07 Build
 on:
   repository_dispatch:
   workflow_dispatch:
-  # schedule:
+  #  schedule:
   #   - cron: 0 17 * * *
   # watch:
   #   types: started
