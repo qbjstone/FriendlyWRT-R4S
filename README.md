@@ -1,5 +1,5 @@
 # FriendlyWRT-R4S
-
+# 懒得更新了
 # 基于FriendlyWRT源码
 
 - 账号 root  默认密码 password
