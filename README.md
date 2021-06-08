@@ -4,7 +4,7 @@
 
 - 账号 root  默认密码 password
 
-- 默认地址 192.168.2.1
+- 默认地址 192.168.2.1...
 
 - 下载地址：https://github.com/DHDAXCW/FriendlyWRT-R4S/releases
 ![Alt text](2.jpg?raw=true "Title")
